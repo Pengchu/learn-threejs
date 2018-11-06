@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>02 - First scene</title>
+    <script type="text/javascript" charset="UTF-8" src="../../libs/three/three.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../../libs/three/controls/TrackballControls.js"></script>
+    <link rel="stylesheet" href="../../css/default.css">
+</head>
+
+<body>
+    <!-- Div which will hold the Output -->
+    <div id="webgl-output"></div>
+    <!-- Javascript code that runs our Three.js examples -->
+    <script type="text/javascript">
+    var scene, camera, renderer;
+    var plane, cube, sphere;
+
+    function init() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(new THREE.Color(0x000000));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+
+        // var axes = new THREE.AxesHelper(20);
+        // scene.add(axes);
+
+        var planeGeometry = new THREE.PlaneGeometry(60, 20);
+        var planeMaterial = new THREE.MeshLambertMaterial({
+            color: 0xAAAAAA
+        });
+        plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        
+        plane.rotation.x = -0.5 * Math.PI;
+        plane.position.set(15, 0, 0);
+        plane.receiveShadow = true;
+
+        scene.add(plane);
+
+        var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+        var cubeMaterial = new THREE.MeshLambertMaterial({
+            color: 0xFF0000,
+        });
+        cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+        cube.position.set(-4, 3, 0);
+        cube.castShadow = true;
+
+        scene.add(cube);
+
+        var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+        var sphereMaterial = new THREE.MeshLambertMaterial({
+            color: 0x7777FF,
+        });
+        sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+        sphere.position.set(20, 4, 2);
+        sphere.castShadow = true;
+
+        scene.add(sphere);
+
+
+        camera.position.set(-30, 40, 30);
+        camera.lookAt(scene.position);
+
+        // add spotlight
+        var spotlight = new THREE.SpotLight(0xFFFFFF);
+        spotlight.position.set(-10, 20, -5);
+        spotlight.castShadow = true;
+
+        scene.add(spotlight);
+
+        var ambientLight = new THREE.AmbientLight(0x353535);
+        scene.add(ambientLight);
+
+        document.getElementById('webgl-output').appendChild(renderer.domElement);
+        render();
+    };
+
+    function render() {
+
+        cube.rotation.x += 0.02;        
+        cube.rotation.y += 0.02;
+        cube.rotation.z += 0.02;
+
+        requestAnimationFrame(render);
+        renderer.render(scene, camera);
+    }
+
+
+    (function() {
+        // contains the code for the example
+        init()
+    })();
+    </script>
+</body>
+
+</html>
+
+</html>

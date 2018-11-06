@@ -5,6 +5,10 @@ learn-threejs
 * Three.js开发指南 第二版
 
 
+### 版本信息
+
+* Three.js 93dev (Three.js 最新版本 r98)
+
 
 ### 目录结构
 	
