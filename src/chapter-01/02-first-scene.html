@@ -7,6 +7,7 @@
     <script type="text/javascript" charset="UTF-8" src="../../libs/three/three.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../../libs/three/controls/TrackballControls.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../../libs/util/Stats.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../../libs/util/dat.gui.js"></script>
     <link rel="stylesheet" href="../../css/default.css">
 </head>
 
@@ -17,7 +18,7 @@
     <script type="text/javascript">
     var scene, camera, renderer;
     var plane, cube, sphere;
-    var stats;
+    var stats, gui, controls;
     var step = 0;
 
     function init() {
@@ -83,7 +84,19 @@
         var ambientLight = new THREE.AmbientLight(0x353535);
         scene.add(ambientLight);
 
+        controls = new function() {
+            this.rotationSpeed = 0.02;
+            this.bouncingSpeed = 0.03;
+        };
+
+        gui = new dat.GUI();
+        gui.add(controls, 'rotationSpeed', 0, 0.5);
+        gui.add(controls, 'bouncingSpeed', 0, 0.5);
+
         document.getElementById('webgl-output').appendChild(renderer.domElement);
+
+        window.addEventListener('resize', onResize, false);
+
         render();
     };
 
@@ -91,11 +104,11 @@
 
         stats.update();
         
-        cube.rotation.x += 0.02;        
-        cube.rotation.y += 0.02;
-        cube.rotation.z += 0.02;
+        cube.rotation.x += controls.rotationSpeed;        
+        cube.rotation.y += controls.rotationSpeed;
+        cube.rotation.z += controls.rotationSpeed;
         
-        step += 0.04;
+        step += controls.bouncingSpeed;
         sphere.position.x = 20 + (10 * Math.cos(step));
         sphere.position.y = 2 + (10 * Math.abs(Math.sin(step)));
 
@@ -114,6 +127,12 @@
         document.getElementById('webgl-output').appendChild(stats.domElement);
         
         return stats;
+    }
+
+    function onResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
 
