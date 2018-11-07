@@ -6,7 +6,8 @@
     <title>01 - Basic skeleton</title>
     <script type="text/javascript" charset="UTF-8" src="../../libs/three/three.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../../libs/three/controls/TrackballControls.js"></script>
-    <script type="text/javascript" src="./js/01-01.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../../libs/util/Stats.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../../libs/util/dat.gui.js"></script>
     <link rel="stylesheet" href="../../css/default.css">
 </head>
 
@@ -16,23 +17,96 @@
     <!-- Javascript code that runs our Three.js examples -->
     <script type="text/javascript">
 
-    var scene, camera, renderer;
-    var plane
-    var stats, controls, gui;
+        var scene, camera, renderer;
+        var plane;
+        var spotLight, ambientLight;
+        var stats, controls, gui;
 
-    function init() {
+        function init() {
 
-        scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            stats = initStats();
 
-        renderer = new THREE.WebGLRenderer();
-        renderer.setClearColor(new THREE.Color());
-    }
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-    (function() {
-        // contains the code for the example
-        init()
-    })();
+            renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(new THREE.Color(0x000000));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            var axes = new THREE.AxesHelper(20);
+            scene.add(axes);
+            
+            var planeGeometry = new THREE.PlaneGeometry(60, 20);
+            var planeMaterial = new THREE.MeshLambertMaterial({
+               color: 0xFFFFFF
+            });
+            plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            
+            plane.rotation.x = -0.5 * Math.PI;
+            plane.position.set(15, 0, 0);
+            
+            scene.add(plane);
+            
+            camera.position.set(-30, 40, 30);
+            camera.lookAt(scene.position);
+            
+            spotLight = new THREE.SpotLight(0xFFFFFF);
+            spotLight.position.set(-10, 20, 5);
+            scene.add(spotLight);
+            
+            ambientLight = new THREE.AmbientLight(0x353535);
+            scene.add(ambientLight);
+            
+            controls = new function() {
+              this.rotationAngle = 90;  
+            };
+            
+            gui = new dat.GUI();
+            gui.add(controls, 'rotationAngle', 0, 360);
+            
+            
+            document.getElementById('webgl-output').appendChild(renderer.domElement);
+            
+            window.addEventListener('resize', onResize, false);
+            
+            
+        }
+        
+        function initStats() {
+            
+            var stats = new Stats();
+            
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.left = '0px';
+            stats.domElement.style.top = '0xp';
+            
+            document.getElementById('webgl-output').appendChild(stats.domElement);
+            
+            return stats;
+        }
+        
+        function render() {
+            
+            stats.update();
+            
+            plane.rotation.x = -controls.rotationAngle / 180 * Math.PI;
+            
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
+        
+        function onResize() {
+            
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        (function() {
+            // contains the code for the example
+            init();
+            render();
+        })();
     </script>
 </body>
 
